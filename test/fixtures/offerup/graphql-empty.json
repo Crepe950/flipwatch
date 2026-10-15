@@ -1,0 +1,9 @@
+{
+  "data": {
+    "modularFeed": {
+      "__typename": "ModularFeedResponse",
+      "looseTiles": [],
+      "pageCursor": null
+    }
+  }
+}

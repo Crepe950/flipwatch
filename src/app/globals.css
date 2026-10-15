@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Components use these via Tailwind's arbitrary values or the @theme names below.
+ * Light-mode text colours keep >= 4.5:1 (WCAG AA for small text) on surface, bg, surface-2 and
+ * their own -soft background; accent-contrast on accent (buttons) too.
+ */
+:root {
+  --bg: #f7f7f5;
+  --surface: #ffffff;
+  --surface-2: #f1f1ee;
+  --border: #e4e4df;
+  --text: #16181d;
+  --muted: #62656e;
+  --accent: #0b7a45;
+  --accent-contrast: #ffffff;
+  --accent-soft: #e3f5ea;
+  --warn: #8a5a12;
+  --warn-soft: #fdf3dc;
+  --danger: #c53030;
+  --danger-soft: #fde8e8;
+  --info: #2b6cb0;
+  --info-soft: #e5effa;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e0f12;
+    --surface: #16181d;
+    --surface-2: #1d2027;
+    --border: #2a2d35;
+    --text: #eceef2;
+    --muted: #9a9ea8;
+    --accent: #34c77b;
+    --accent-contrast: #06140c;
+    --accent-soft: #123222;
+    --warn: #e0b04f;
+    --warn-soft: #33290f;
+    --danger: #f07171;
+    --danger-soft: #3a1717;
+    --info: #6aa8ea;
+    --info-soft: #12253a;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-fg: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-accent-soft: var(--accent-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * iOS Safari zooms the page in when a text field with text under 16px gets focus, and leaves it zoomed.
+ * On iOS only (-webkit-touch-callout), fields get 16px so the page keeps fitting the screen. Unlayered,
+ * so it wins over Tailwind's text-sm / text-xs utilities.
+ */
+@supports (-webkit-touch-callout: none) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}

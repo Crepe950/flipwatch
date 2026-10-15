@@ -1,0 +1,12 @@
+{
+  "errors": [
+    {
+      "errorId": 12023,
+      "domain": "API_BROWSE",
+      "category": "REQUEST",
+      "message": "Invalid filter value.",
+      "longMessage": "The filter 'pickupPostalCode' value is invalid for the specified pickupCountry.",
+      "parameters": [{ "name": "filter", "value": "pickupPostalCode" }]
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+# Shell scripts must keep Unix line endings or they fail on macOS/Linux.
+*.sh text eol=lf

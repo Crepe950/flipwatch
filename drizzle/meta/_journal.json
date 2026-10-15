@@ -1,0 +1,76 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790626259937,
+      "tag": "0000_init",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790631312405,
+      "tag": "0001_deal_stage_changed_at",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790634430820,
+      "tag": "0002_engine_semantics",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790640523433,
+      "tag": "0003_price_drop_reference",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790647630024,
+      "tag": "0004_purple_spot",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790649387060,
+      "tag": "0005_chemical_vance_astro",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790654838876,
+      "tag": "0006_curved_mikhail_rasputin",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790710593679,
+      "tag": "0007_zippy_titania",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790726222524,
+      "tag": "0008_spotty_blazing_skull",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791344362423,
+      "tag": "0009_stale_magneto",
+      "breakpoints": true
+    }
+  ]
+}

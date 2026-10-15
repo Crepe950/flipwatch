@@ -1,0 +1,2 @@
+ALTER TABLE "deals" ADD COLUMN "stage_changed_at" timestamp with time zone DEFAULT now() NOT NULL;--> statement-breakpoint
+UPDATE "deals" SET "stage_changed_at" = COALESCE(CASE "stage" WHEN 'lead' THEN "created_at" WHEN 'contacted' THEN "contacted_at" WHEN 'purchased' THEN "purchased_at" WHEN 'sold' THEN "sold_at" END, "updated_at");

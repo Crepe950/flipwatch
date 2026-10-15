@@ -1,0 +1,64 @@
+{
+  "data": {
+    "modularFeed": {
+      "__typename": "ModularFeedResponse",
+      "looseTiles": [
+        {
+          "__typename": "ModularFeedTileListing",
+          "tileId": "t1",
+          "listing": {
+            "__typename": "ModularFeedListing",
+            "listingId": "1784600001",
+            "title": "Nintendo Switch OLED",
+            "price": "220",
+            "locationName": "Portland, OR",
+            "conditionText": "Used",
+            "isFirmPrice": false,
+            "flags": [],
+            "image": {
+              "url": "https://images.offerup.com/SwItCh01=/250x333/aa11/aa11bb.jpg",
+              "width": 250,
+              "height": 333
+            }
+          }
+        },
+        {
+          "__typename": "ModularFeedTileSearchAlert",
+          "tileId": "alert"
+        },
+        {
+          "__typename": "ModularFeedTileListing",
+          "tileId": "t2",
+          "listing": {
+            "__typename": "ModularFeedListing",
+            "listingId": 1784600002,
+            "title": "Switch games bundle",
+            "price": 45.5,
+            "locationName": "Beaverton, OR",
+            "conditionText": null,
+            "isFirmPrice": true,
+            "flags": [
+              "SHIPPING_ENABLED"
+            ],
+            "image": {
+              "url": "https://images.offerup.com/SwItCh02=/250x333/bb22/bb22cc.jpg"
+            }
+          }
+        },
+        {
+          "__typename": "ModularFeedTileListing",
+          "tileId": "t1-dup",
+          "listing": {
+            "__typename": "ModularFeedListing",
+            "listingId": "1784600001",
+            "title": "Nintendo Switch OLED",
+            "price": "220",
+            "locationName": "Portland, OR",
+            "image": null
+          }
+        }
+      ],
+      "pageCursor": "eyJvZmZzZXQiOjUwfQ=="
+    }
+  }
+}

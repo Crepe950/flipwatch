@@ -1,0 +1,1 @@
+ALTER TABLE "search_matches" ADD COLUMN "last_event_previous_price_cents" integer;

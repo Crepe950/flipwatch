@@ -1,0 +1,121 @@
+{
+  "href": "https://api.ebay.com/buy/browse/v1/item_summary/search?q=ps5&limit=50&sort=newlyListed&offset=0",
+  "total": 1873,
+  "next": "https://api.ebay.com/buy/browse/v1/item_summary/search?q=ps5&limit=50&sort=newlyListed&offset=50",
+  "limit": 50,
+  "offset": 0,
+  "warnings": [
+    {
+      "errorId": 12511,
+      "domain": "API_BROWSE",
+      "category": "REQUEST",
+      "message": "The 'pickupRadius' value was adjusted.",
+      "longMessage": "The 'pickupRadius' value exceeds the maximum and was set to 250 km."
+    }
+  ],
+  "itemSummaries": [
+    {
+      "itemId": "v1|306012345678|0",
+      "title": "Sony PlayStation 5  Disc Edition 825GB   w/ 2 controllers",
+      "leafCategoryIds": ["139971"],
+      "categories": [
+        { "categoryId": "139971", "categoryName": "Video Game Consoles" },
+        { "categoryId": "1249", "categoryName": "Video Games & Consoles" }
+      ],
+      "image": { "imageUrl": "https://i.ebayimg.com/images/g/aBcAAOSw1234abcd/s-l225.jpg" },
+      "price": { "value": "380.00", "currency": "USD" },
+      "itemHref": "https://api.ebay.com/buy/browse/v1/item/v1%7C306012345678%7C0",
+      "seller": { "username": "retro_flips_sea", "feedbackPercentage": "99.6", "feedbackScore": 1532 },
+      "condition": "Used",
+      "conditionId": "3000",
+      "thumbnailImages": [{ "imageUrl": "https://i.ebayimg.com/images/g/aBcAAOSw1234abcd/s-l140.jpg" }],
+      "additionalImages": [
+        { "imageUrl": "https://i.ebayimg.com/images/g/xYzAAOSw5678efgh/s-l225.jpg" },
+        { "imageUrl": "https://i.ebayimg.com/images/g/aBcAAOSw1234abcd/s-l225.jpg" },
+        { "imageUrl": "javascript:alert(1)" }
+      ],
+      "shippingOptions": [
+        { "shippingCostType": "FIXED", "shippingCost": { "value": "25.00", "currency": "USD" } }
+      ],
+      "buyingOptions": ["FIXED_PRICE", "BEST_OFFER"],
+      "itemWebUrl": "https://www.ebay.com/itm/306012345678?hash=item473f1c2b4e:g:aBcAAOSw1234abcd&amdata=enc%3AAQAJAAAA",
+      "itemLocation": { "city": "Seattle", "stateOrProvince": "WA", "postalCode": "981**", "country": "US" },
+      "adultOnly": false,
+      "legacyItemId": "306012345678",
+      "availableCoupons": false,
+      "itemOriginDate": "2026-09-28T16:58:02.000Z",
+      "itemCreationDate": "2026-09-28T17:02:11.000Z",
+      "topRatedBuyingExperience": false,
+      "priorityListing": false,
+      "listingMarketplaceId": "EBAY_US",
+      "distanceFromPickupLocation": { "value": "7", "unitOfMeasure": "KILOMETER" }
+    },
+    {
+      "itemId": "v1|126712345001|0",
+      "title": "PS5 Slim Digital - AUCTION no reserve",
+      "categories": [{ "categoryId": "139971", "categoryName": "Video Game Consoles" }],
+      "image": { "imageUrl": "https://i.ebayimg.com/images/g/qRsAAOSwAbCdEfGh/s-l225.jpg" },
+      "price": { "value": "0.99", "currency": "USD" },
+      "currentBidPrice": { "value": "212.50", "currency": "USD" },
+      "bidCount": 14,
+      "seller": { "username": "bargainbin_pdx", "feedbackPercentage": "100.0", "feedbackScore": 88 },
+      "condition": "Used",
+      "conditionId": "3000",
+      "buyingOptions": ["AUCTION"],
+      "itemEndDate": "2026-10-03T02:15:00.000Z",
+      "itemWebUrl": "https://www.ebay.com/itm/126712345001",
+      "itemLocation": { "postalCode": "972**", "country": "US" },
+      "legacyItemId": "126712345001",
+      "itemCreationDate": "2026-09-28T15:40:00.000Z"
+    },
+    {
+      "itemId": "v1|287712345002|0",
+      "title": "PS5 controller DualSense - auction with Buy It Now",
+      "image": { "imageUrl": "https://i.ebayimg.com/images/g/dUaLAOSwSeNsE001/s-l225.jpg" },
+      "price": { "value": "45.00", "currency": "USD" },
+      "currentBidPrice": { "value": "20.00", "currency": "USD" },
+      "bidCount": 0,
+      "buyingOptions": ["AUCTION", "FIXED_PRICE"],
+      "itemWebUrl": "https://www.ebay.com/itm/287712345002",
+      "legacyItemId": "287712345002",
+      "itemOriginDate": "2026-09-28T14:05:30.000Z",
+      "seller": { "username": "gear.depot" }
+    },
+    {
+      "itemId": "v1|156612345003|0",
+      "title": "PlayStation 5 console for parts (no image, no location)",
+      "price": { "value": "1,150.00", "currency": "USD" },
+      "buyingOptions": ["FIXED_PRICE"],
+      "itemWebUrl": "https://www.ebay.com/itm/156612345003",
+      "legacyItemId": "156612345003",
+      "condition": "For parts or not working",
+      "itemCreationDate": "not-a-date"
+    },
+    {
+      "itemId": "v1|306012345678|0",
+      "title": "Duplicate of the first item (eBay pagination overlap)",
+      "price": { "value": "1.00", "currency": "USD" },
+      "itemWebUrl": "https://www.ebay.com/itm/306012345678"
+    },
+    {
+      "itemId": "v1|166612345004|0",
+      "title": "PS5 with variation (no itemWebUrl, falls back to legacy id)",
+      "price": { "value": "410.00", "currency": "CAD" },
+      "buyingOptions": ["FIXED_PRICE"],
+      "legacyItemId": "166612345004",
+      "thumbnailImages": [{ "imageUrl": "https://i.ebayimg.com/thumbs/images/g/tHuMAOSw0000/s-l140.jpg" }],
+      "itemLocation": { "stateOrProvince": "BC", "country": "CA" }
+    },
+    {
+      "itemId": "v1|176612345005|0",
+      "price": { "value": "300.00", "currency": "USD" },
+      "itemWebUrl": "https://www.ebay.com/itm/176612345005"
+    },
+    {
+      "title": "Item without an itemId is skipped",
+      "price": { "value": "300.00", "currency": "USD" },
+      "itemWebUrl": "https://www.ebay.com/itm/186612345006"
+    },
+    "not-an-object"
+  ]
+}

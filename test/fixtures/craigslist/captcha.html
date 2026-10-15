@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>craigslist | verification</title>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 4em; }
+    </style>
+</head>
+<body>
+    <h1>craigslist</h1>
+    <p>We have detected unusual activity from your network. Please verify you are a human to continue.</p>
+    <form action="/verify" method="post">
+        <div class="h-captcha" data-sitekey="10000000-ffff-ffff-ffff-000000000001"></div>
+        <input type="hidden" name="return" value="/search/sss?query=ps5">
+        <button type="submit">continue</button>
+    </form>
+</body>
+</html>

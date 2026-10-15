@@ -1,0 +1,1 @@
+ALTER TABLE "searches" ADD COLUMN "notify_min_profit_pct" integer;
