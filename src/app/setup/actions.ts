@@ -17,7 +17,17 @@ import { locationFromPlace, placeAt, searchPlaces, type Place } from "@/lib/geoc
 import { cancelFacebookConnect, facebookConnectStatus, startFacebookConnect, type ConnectState } from "@/lib/marketplaces/facebook/connect";
 import { hasSessionCookies, isSendableCookieHeader, normalizeCookieHeader } from "@/lib/marketplaces/facebook/settings";
 import { setDefaultLocation } from "@/lib/queries/settings";
-import { AI_PROVIDERS, publicRuntimeSettings, saveRuntimeSettings, type PublicRuntimeSettings } from "@/lib/runtime-settings";
+import {
+  AI_PROVIDERS,
+  facebookAccountsPatch,
+  publicRuntimeSettings,
+  runtimeSettings,
+  saveRuntimeSettings,
+  storedFacebookAccounts,
+  TooManyFacebookAccountsError,
+  withFacebookSession,
+  type PublicRuntimeSettings,
+} from "@/lib/runtime-settings";
 import { requireAuth } from "../login/session";
 
 function errorMessage(err: unknown): string {
@@ -111,8 +121,11 @@ export async function setFacebookEnabledAction(enabled: boolean, acknowledgedRis
   return { ok: true, settings: publicRuntimeSettings(settings) };
 }
 
+/** Save a logged-in session: a new account, or a fresh session for one that's already connected. */
 async function storeSession(cookies: string): Promise<void> {
-  await saveRuntimeSettings(await getDb(), { facebookCookies: cookies, facebookConnectedAt: new Date().toISOString(), facebookEnabled: true });
+  const db = await getDb();
+  const accounts = withFacebookSession(storedFacebookAccounts(runtimeSettings()), cookies);
+  await saveRuntimeSettings(db, { ...facebookAccountsPatch(accounts), facebookEnabled: true });
 }
 
 export async function startFacebookConnectAction(): Promise<ConnectState> {
@@ -132,9 +145,47 @@ export async function cancelFacebookConnectAction(): Promise<void> {
   cancelFacebookConnect();
 }
 
+/** Disconnect every account and turn Facebook off. */
 export async function disconnectFacebookAction(): Promise<AiFormResult> {
   await requireAuth();
-  const settings = await saveRuntimeSettings(await getDb(), { facebookCookies: "", facebookConnectedAt: "", facebookEnabled: false });
+  const settings = await saveRuntimeSettings(await getDb(), { ...facebookAccountsPatch([]), facebookEnabled: false });
+  refresh();
+  return { ok: true, settings: publicRuntimeSettings(settings) };
+}
+
+/** Forget one account's session. Removing the last one turns Facebook off. */
+export async function removeFacebookAccountAction(id: string): Promise<AiFormResult> {
+  await requireAuth();
+  const accounts = storedFacebookAccounts(runtimeSettings()).filter((a) => a.id !== id);
+  const patch = { ...facebookAccountsPatch(accounts), ...(accounts.length === 0 ? { facebookEnabled: false } : {}) };
+  const settings = await saveRuntimeSettings(await getDb(), patch);
+  refresh();
+  return { ok: true, settings: publicRuntimeSettings(settings) };
+}
+
+const accountEdits = z
+  .array(
+    z.object({
+      id: z.string().max(16),
+      name: z.string().trim().max(60),
+      /** Blank = an equal share. */
+      share: z.union([z.literal(""), z.coerce.number().int().min(1).max(100)]),
+    }),
+  )
+  .max(10);
+
+/** Rename accounts and change how searches are split between them. */
+export async function updateFacebookAccountsAction(edits: unknown): Promise<AiFormResult> {
+  await requireAuth();
+  const parsed = accountEdits.safeParse(edits);
+  if (!parsed.success) return { ok: false, error: "Each share must be a whole number from 1 to 100 (or blank for an equal share)." };
+  const byId = new Map(parsed.data.map((e) => [e.id, e]));
+  const accounts = storedFacebookAccounts(runtimeSettings()).map((a) => {
+    const edit = byId.get(a.id);
+    if (!edit) return a;
+    return { ...a, name: edit.name || undefined, share: edit.share === "" ? undefined : edit.share };
+  });
+  const settings = await saveRuntimeSettings(await getDb(), facebookAccountsPatch(accounts));
   refresh();
   return { ok: true, settings: publicRuntimeSettings(settings) };
 }
@@ -146,7 +197,12 @@ export async function saveFacebookCookieAction(raw: string): Promise<AiFormResul
   if (!cookies) return { ok: false, error: "Paste the Cookie header first." };
   if (!isSendableCookieHeader(cookies)) return { ok: false, error: "That contains characters a Cookie header can't have — copy the whole value again." };
   if (!hasSessionCookies(cookies)) return { ok: false, error: "That isn't a logged-in session: it needs the c_user and xs cookies." };
-  await storeSession(cookies);
+  try {
+    await storeSession(cookies);
+  } catch (err) {
+    if (err instanceof TooManyFacebookAccountsError) return { ok: false, error: err.message };
+    throw err;
+  }
   refresh();
   return { ok: true, settings: publicRuntimeSettings() };
 }

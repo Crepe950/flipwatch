@@ -77,6 +77,11 @@ Chrome or Edge (whichever you have), you log in as usual, and it saves only the 
 password — on this computer, then closes the window. If you don't have Chrome or Edge, the *Advanced* option
 lets you paste a Cookie header instead.
 
+You can connect up to five accounts with **Connect another account**: each search runs on one of them, and you
+choose how the searches are split (for example 65 / 35), so no single account carries all the traffic. The hourly
+request limit is shared between them by the same split, and if Facebook rate-limits one account, the others carry
+on. Logging in again to an account that's already listed refreshes its session.
+
 ## Costs
 
 FlipWatch is free. The AI is paid by you: with an API key you pay Anthropic or OpenAI per use (scoring a

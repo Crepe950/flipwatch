@@ -51,21 +51,14 @@ export function facebookAccounts(ctx?: AdapterContext): FacebookAccount[] {
   const own = normalizeCookieHeader(ctx?.credentials.facebookCookies);
   if (own) return [{ key: "context", label: "the Facebook account", share: 1, cookies: own }];
   const configured = config.facebookAccountCookies
-    .map(({ slot, cookies }) => ({ slot, cookies: normalizeCookieHeader(cookies) }))
-    .filter((a): a is { slot: number; cookies: string } => Boolean(a.cookies));
-  const shares = config.facebookAccountShares;
-  const weights = configured.map(({ slot }) => (Number.isFinite(shares[slot - 1]) ? shares[slot - 1] : Number.NaN));
+    .map((a) => ({ ...a, cookies: normalizeCookieHeader(a.cookies) }))
+    .filter((a): a is typeof a & { cookies: string } => Boolean(a.cookies));
   // Accounts without a valid share get the average of the others (or equal shares when none are set).
-  const known = weights.filter(Number.isFinite);
+  const known = configured.map((a) => a.share).filter(Number.isFinite);
   const fallback = known.length ? known.reduce((a, b) => a + b, 0) / known.length : 1;
-  const filled = weights.map((w) => (Number.isFinite(w) ? w : fallback));
+  const filled = configured.map((a) => (Number.isFinite(a.share) ? a.share : fallback));
   const sum = filled.reduce((a, b) => a + b, 0) || 1;
-  return configured.map(({ slot, cookies }, i) => ({
-    key: `account-${slot}`,
-    label: `Facebook account ${slot}`,
-    share: filled[i] / sum,
-    cookies,
-  }));
+  return configured.map(({ key, label, cookies }, i) => ({ key, label, share: filled[i] / sum, cookies }));
 }
 
 /** fetch() rejects header values outside printable ASCII, so catch them as a config problem, not a network error. */

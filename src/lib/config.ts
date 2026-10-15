@@ -1,4 +1,4 @@
-import { runtimeSettings, type AiProviderId } from "./runtime-settings";
+import { facebookAccountLabel, runtimeSettings, storedFacebookAccounts, type AiProviderId } from "./runtime-settings";
 
 /**
  * Typed access to environment configuration. Read lazily so tests can mutate process.env.
@@ -145,30 +145,29 @@ export const config = {
   get facebookEnabled() {
     return rt().facebookEnabled ?? str("FACEBOOK_ENABLED") === "true";
   },
-  /** Raw Cookie header from a logged-in browser session ("Connect Facebook" in the app, or FACEBOOK_COOKIES). */
+  /** The first account's Cookie header (Settings → Facebook, or FACEBOOK_COOKIES). */
   get facebookCookies() {
-    return rt().facebookCookies || str("FACEBOOK_COOKIES");
+    return config.facebookAccountCookies[0]?.cookies;
   },
   /**
-   * Cookie headers of every Facebook account to search with: the one connected in the app, else
-   * FACEBOOK_COOKIES, FACEBOOK_COOKIES_2, FACEBOOK_COOKIES_3.
+   * Every Facebook account to search with and its relative share (NaN = no share set): the accounts
+   * connected in Settings, else FACEBOOK_COOKIES, FACEBOOK_COOKIES_2, FACEBOOK_COOKIES_3 with
+   * FACEBOOK_ACCOUNT_SHARES (e.g. "65,35").
    */
-  get facebookAccountCookies(): Array<{ slot: number; cookies: string }> {
-    const connected = rt().facebookCookies;
-    if (connected) return [{ slot: 1, cookies: connected }];
+  get facebookAccountCookies(): Array<{ key: string; label: string; cookies: string; share: number }> {
+    const stored = storedFacebookAccounts(rt());
+    if (stored.length) {
+      return stored.map((a, i) => ({ key: `fb-${a.id}`, label: facebookAccountLabel(a, i), cookies: a.cookies, share: a.share ?? Number.NaN }));
+    }
+    const shares = (str("FACEBOOK_ACCOUNT_SHARES") ?? "").split(",").map((s) => Number.parseFloat(s.trim()));
     return [str("FACEBOOK_COOKIES"), str("FACEBOOK_COOKIES_2"), str("FACEBOOK_COOKIES_3")]
-      .map((cookies, i) => ({ slot: i + 1, cookies }))
-      .filter((a): a is { slot: number; cookies: string } => Boolean(a.cookies));
-  },
-  /**
-   * Relative share of Facebook traffic per account slot, e.g. "35,65" (account 1, account 2). Missing or
-   * invalid entries count as equal shares.
-   */
-  get facebookAccountShares(): number[] {
-    return (str("FACEBOOK_ACCOUNT_SHARES") ?? "")
-      .split(",")
-      .map((s) => Number.parseFloat(s.trim()))
-      .map((n) => (Number.isFinite(n) && n > 0 ? n : Number.NaN));
+      .map((cookies, i) => ({
+        key: `account-${i + 1}`,
+        label: `Facebook account ${i + 1}`,
+        cookies: cookies ?? "",
+        share: Number.isFinite(shares[i]) && shares[i] > 0 ? shares[i] : Number.NaN,
+      }))
+      .filter((a) => Boolean(a.cookies));
   },
   /** Most Facebook requests per hour (page loads + API calls); scheduled searches may use two thirds. */
   get facebookMaxRequestsPerHour() {

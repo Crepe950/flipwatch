@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { CircleCheck, LoaderCircle, LogIn, ShieldAlert, TriangleAlert, Unplug } from "lucide-react";
+import { CircleCheck, LoaderCircle, LogIn, ShieldAlert, TriangleAlert, Unplug, UserPlus } from "lucide-react";
 import {
   cancelFacebookConnectAction,
   disconnectFacebookAction,
@@ -13,7 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox, Field, Textarea } from "@/components/ui/field";
 import type { ConnectState } from "@/lib/marketplaces/facebook/connect";
-import type { PublicRuntimeSettings } from "@/lib/runtime-settings";
+import { MAX_FACEBOOK_ACCOUNTS, type PublicRuntimeSettings } from "@/lib/runtime-settings";
+import { FacebookAccounts } from "./facebook-accounts";
 import { cn } from "@/lib/cn";
 
 export const FACEBOOK_RISK =
@@ -21,16 +22,11 @@ export const FACEBOOK_RISK =
   "which is against Meta's Terms of Service. Facebook can limit or ban accounts that do this. FlipWatch keeps its " +
   "searches slow (a capped number per hour) to lower the risk, but it can't remove it. Consider using a secondary account.";
 
-function connectedAgo(iso: string | null): string {
-  if (!iso) return "";
-  const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
-  return days <= 0 ? "today" : days === 1 ? "yesterday" : `${days} days ago`;
-}
-
-/** Opt-in, connect (login window that saves the session), disconnect, or paste a cookie (advanced). */
+/** Opt-in, connect accounts (login window that saves the session), split searches between them, or paste a cookie (advanced). */
 export function FacebookConnect({ initial }: { initial: PublicRuntimeSettings }) {
   const [settings, setSettings] = useState(initial);
-  const [acknowledged, setAcknowledged] = useState(initial.facebookEnabled);
+  // Connecting an account required confirming the risk, so a connected-but-off Facebook can be turned back on.
+  const [acknowledged, setAcknowledged] = useState(initial.facebookEnabled || initial.facebookConnected);
   const [status, setStatus] = useState<ConnectState>({ state: "idle" });
   const [error, setError] = useState<string | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -39,6 +35,8 @@ export function FacebookConnect({ initial }: { initial: PublicRuntimeSettings })
   const polling = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const busy = status.state === "starting" || status.state === "waiting";
+  const accounts = settings.facebookAccounts;
+  const full = accounts.length >= MAX_FACEBOOK_ACCOUNTS;
 
   useEffect(() => {
     if (!busy) return;
@@ -110,11 +108,24 @@ export function FacebookConnect({ initial }: { initial: PublicRuntimeSettings })
 
   return (
     <div className="space-y-3 text-sm">
+      {settings.facebookConnected && !settings.facebookEnabled ? (
+        <p className="text-muted">Facebook is turned off: your accounts stay saved, but FlipWatch doesn&apos;t search Marketplace.</p>
+      ) : null}
       {settings.facebookConnected ? (
-        <p className="flex items-center gap-1.5 text-accent">
-          <CircleCheck className="size-4" />
-          Connected{settings.facebookConnectedAt ? ` ${connectedAgo(settings.facebookConnectedAt)}` : ""}. Facebook searches use this session.
-        </p>
+        <>
+          <p className="flex items-center gap-1.5 text-accent">
+            <CircleCheck className="size-4" />
+            {accounts.length === 1
+              ? "Connected. Facebook searches use this account."
+              : `${accounts.length} accounts connected. Facebook searches are split between them.`}
+          </p>
+          <FacebookAccounts
+            key={accounts.map((a) => `${a.id}:${a.connectedAt}`).join("|")}
+            accounts={accounts}
+            disabled={busy}
+            onSaved={setSettings}
+          />
+        </>
       ) : (
         <p className="text-muted">
           Log in to Facebook in a browser window FlipWatch opens. It saves the session cookie (never your password) on this
@@ -141,7 +152,7 @@ export function FacebookConnect({ initial }: { initial: PublicRuntimeSettings })
         </p>
       ) : status.state === "connected" ? (
         <p className="flex items-center gap-1.5 text-accent">
-          <CircleCheck className="size-4" /> Logged in — session saved, and the login window closed.
+          <CircleCheck className="size-4" /> Logged in. The session is saved and the login window closed.
         </p>
       ) : status.state === "error" ? (
         <p role="alert" className="flex items-start gap-1.5 text-danger">
@@ -150,21 +161,35 @@ export function FacebookConnect({ initial }: { initial: PublicRuntimeSettings })
       ) : null}
 
       <div className="flex flex-wrap gap-2">
-        <Button type="button" onClick={connect} disabled={pending || busy}>
-          <LogIn className="size-4" />
-          {settings.facebookConnected ? "Reconnect Facebook" : "Connect Facebook"}
+        <Button type="button" onClick={connect} disabled={pending || busy || full}>
+          {settings.facebookConnected ? <UserPlus className="size-4" /> : <LogIn className="size-4" />}
+          {settings.facebookConnected ? "Connect another account" : "Connect Facebook"}
         </Button>
-        {settings.facebookConnected ? (
+        {accounts.length > 1 ? (
           <Button type="button" variant="secondary" onClick={disconnect} disabled={pending || busy}>
-            <Unplug className="size-4" /> Disconnect
+            <Unplug className="size-4" /> Disconnect all
           </Button>
         ) : null}
         {settings.facebookEnabled ? (
           <Button type="button" variant="ghost" onClick={() => toggle(false)} disabled={pending || busy}>
             Turn Facebook off
           </Button>
+        ) : settings.facebookConnected ? (
+          <Button type="button" variant="secondary" onClick={() => toggle(true)} disabled={pending || busy}>
+            Turn Facebook back on
+          </Button>
         ) : null}
       </div>
+
+      {settings.facebookConnected ? (
+        <p className="text-xs text-muted">
+          {full
+            ? `That's the most FlipWatch supports (${MAX_FACEBOOK_ACCOUNTS}). `
+            : "Each login opens a fresh window, so you can sign in to a different account. "}
+          If an account&apos;s session stops working, connect it again: logging in to an account that&apos;s already listed
+          refreshes it and keeps its name and share.
+        </p>
+      ) : null}
 
       <button type="button" className={cn("text-xs text-muted underline")} onClick={() => setShowAdvanced((v) => !v)}>
         {showAdvanced ? "Hide advanced" : "Advanced: paste a Cookie header instead"}
@@ -178,8 +203,8 @@ export function FacebookConnect({ initial }: { initial: PublicRuntimeSettings })
           >
             <Textarea id="fb-cookie" rows={3} spellCheck={false} value={cookie} onChange={(e) => setCookie(e.target.value)} className="font-mono text-xs" />
           </Field>
-          <Button type="button" variant="secondary" onClick={saveCookie} disabled={pending || !cookie.trim()}>
-            Save cookie
+          <Button type="button" variant="secondary" onClick={saveCookie} disabled={pending || !cookie.trim() || full}>
+            {settings.facebookConnected ? "Add account" : "Save cookie"}
           </Button>
         </div>
       ) : null}

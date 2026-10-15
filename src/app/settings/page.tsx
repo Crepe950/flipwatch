@@ -127,8 +127,14 @@ export default async function SettingsPage() {
           id="facebook"
           icon={Store}
           title="Facebook Marketplace"
-          description="Optional. Searches Marketplace through your own logged-in Facebook session."
-          aside={data.runtime.facebookConnected && data.runtime.facebookEnabled ? <Badge tone="green">Connected</Badge> : <Badge>Off</Badge>}
+          description="Optional. Searches Marketplace through your own logged-in Facebook accounts, split between them if you connect more than one."
+          aside={
+            data.runtime.facebookConnected && data.runtime.facebookEnabled ? (
+              <Badge tone="green">{data.runtime.facebookAccounts.length > 1 ? `${data.runtime.facebookAccounts.length} accounts` : "Connected"}</Badge>
+            ) : (
+              <Badge>Off</Badge>
+            )
+          }
         >
           <FacebookConnect initial={data.runtime} />
         </SettingsSection>
