@@ -1,5 +1,5 @@
 # Production-style stack: Postgres + web app + dedicated polling worker.
-#   cp .env.example .env   # fill in what you need — APP_PASSWORD is required (the app refuses to start without it)
+#   cp .env.example .env   # fill in what you need (APP_PASSWORD is optional)
 #   docker compose up -d --build
 # Containers run in UTC: set TZ in .env (e.g. TZ=America/Vancouver) so follow-ups become due at your
 # local midnight.
